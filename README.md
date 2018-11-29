@@ -1,6 +1,6 @@
 # markpdf - Watermark PDF files using image or text
 
-A tiny command line tool to watermark PDF files using image or text. 
+A tiny command line tool for watermarking PDF files using image or text. 
 With simple options to configure position, opacity, rotation, stretch etc.
 
 Highlights -
@@ -64,25 +64,25 @@ markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" -wy -10
 
 ## Roadmap
 
-✅ Draw image on every page of PDF
-✅ Configure Opacity option
-✅ Configure watermark position by X and Y offset
-✅ Allow negative values to for offset to adjust from opposite direction
-✅️ Easy option for positioning at center
-✅ Configure rotation angle
-✅ Options to Stretch watermark to width or height, proportionately
-✅ Options to Stretch watermark to width or height at the middle of page
-◻️ Render text on every page
-◻️ Configure text color, style and font
-◻️ Configure text opacity
-◻️ Configure text rotation angle
-◻️ Text placement by offset 
-◻️ Put text at page center
+✅ Draw image on every page of PDF  
+✅ Configure Opacity option  
+✅ Configure watermark position by X and Y offset  
+✅ Allow negative values to for offset to adjust from opposite direction  
+✅️ Easy option for positioning at center  
+✅ Configure rotation angle  
+✅ Options to Stretch watermark to width or height, proportionately  
+✅ Options to Stretch watermark to width or height at the middle of page  
+◻️ Render text on every page  
+◻️ Configure text color, style and font  
+◻️ Configure text opacity  
+◻️ Configure text rotation angle  
+◻️ Text placement by offset  
+◻️ Put text at page center  
 
 ### Contribute
 
 If you fix a bug or want to add/improve a feature, 
-and it's alligned with the focus (merging with ease) of this tool, 
+and it's alligned with the focus of this tool - _watermarking PDF with ease_, 
 I will be glad to accept your PR. :) 
 
 ### Thanks

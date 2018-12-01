@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math"
 	"os"
 
 	flag "github.com/ogier/pflag"
@@ -11,9 +10,10 @@ import (
 	pdf "github.com/unidoc/unidoc/pdf/model"
 )
 
-var offsetX, offsetY float64
+var offsetX, offsetY, fontSize float64
 var scaleH, scaleW, scaleHCenter, scaleWCenter, center, verbose, version bool
 var opacity, angle float64
+var font, color string
 
 const (
 	VERSION = "1.0.0"
@@ -27,6 +27,11 @@ func init() {
 	flag.BoolVarP(&scaleH, "scale-height", "h", false, "Scale Image to page height. If set, top offset Y will be ignored.")
 	flag.BoolVarP(&scaleWCenter, "scale-width-center", "W", false, "Scale Image to page width and Y will be set at middle.")
 	flag.BoolVarP(&scaleHCenter, "scale-height-center", "H", false, "Scale Image to page height and X will be set at middle.")
+
+	flag.StringVarP(&font, "font", "f", "helvetica_bold", "Set font. Check --help for allowed name list.")
+	flag.StringVarP(&color, "color", "l", "333333", "Set font color as 6 or 3 character hexadecimal code (without '#'). See https://www.color-hex.com")
+	flag.Float64VarP(&fontSize, "font-size", "s", 18.0, "Font-size in points.")
+
 	flag.Float64VarP(&opacity, "opacity", "o", 0.5, "Opacity of watermark. float between 0 to 1.")
 	flag.Float64VarP(&angle, "angle", "a", 0, "Angle of rotation. between 0 to 360, counter clock-wise.")
 
@@ -62,20 +67,20 @@ func main() {
 	sourcePath := args[0]
 	watermark := args[1]
 	outputPath := args[2]
-	addImageMark(sourcePath, outputPath, watermark)
+	markPDF(sourcePath, outputPath, watermark)
 
 	fmt.Printf("SUCCESS: Output generated at : %s \n", outputPath)
 	os.Exit(0)
 }
 
-func addImageMark(inputPath string, outputPath string, watermarkPath string) error {
+func markPDF(inputPath string, outputPath string, watermark string) error {
 	debugInfo(fmt.Sprintf("Input PDF: %v", inputPath))
-	debugInfo(fmt.Sprintf("Watermark image: %s", watermarkPath))
 
 	c := creator.New()
+	var watermarkImg *creator.Image
+	var para *creator.Paragraph
 
-	watermarkImg, err := creator.NewImageFromFile(watermarkPath)
-	fatalIfError(err, fmt.Sprintf("Failed to load watermark image. [%s]", err))
+	isImageMark := isImageMark(watermark)
 
 	// Read the input pdf file.
 	f, err := os.Open(inputPath)
@@ -102,45 +107,43 @@ func addImageMark(inputPath string, outputPath string, watermarkPath string) err
 		if pageNum == 1 {
 			debugInfo(fmt.Sprintf("Page Width       : %v", c.Context().PageWidth))
 			debugInfo(fmt.Sprintf("Page Height      : %v", c.Context().PageHeight))
-			debugInfo(fmt.Sprintf("Watermark Width  : %v", watermarkImg.Width()))
-			debugInfo(fmt.Sprintf("Watermark Height : %v", watermarkImg.Height()))
-
-			if scaleWCenter {
-				watermarkImg.ScaleToWidth(c.Context().PageWidth)
-				offsetX = 0
-				offsetY = (c.Context().PageHeight - watermarkImg.Height()) / 2
-			} else if scaleHCenter {
-				watermarkImg.ScaleToHeight(c.Context().PageHeight)
-				offsetX = (c.Context().PageWidth - watermarkImg.Width()) / 2
-				offsetY = 0
-			} else if scaleW {
-				watermarkImg.ScaleToWidth(c.Context().PageWidth)
-				offsetX = 0
-			} else if scaleH {
-				watermarkImg.ScaleToHeight(c.Context().PageHeight)
-				offsetY = 0
-			} else if center {
-				offsetX = (c.Context().PageWidth - watermarkImg.Width()) / 2
-				offsetY = (c.Context().PageHeight - watermarkImg.Height()) / 2
-			}
-
-			// None of the above logic is setting negative position
-			// So, if found, that must be set from command line flags
-			if offsetX < 0 {
-				offsetX = c.Context().PageWidth - (watermarkImg.Width() + math.Abs(offsetX))
-			}
-			if offsetY < 0 {
-				offsetY = c.Context().PageHeight - (watermarkImg.Height() + math.Abs(offsetY))
-			}
 		}
 
-		watermarkImg.SetPos(offsetX, offsetY)
-		watermarkImg.SetOpacity(opacity)
-		watermarkImg.SetAngle(angle)
+		if isImageMark {
+			if pageNum == 1 {
+				watermarkImg, err = creator.NewImageFromFile(watermark)
+				fatalIfError(err, fmt.Sprintf("Failed to load watermark image. [%s]", err))
+				adjustImagePosition(watermarkImg, c)
+			}
 
-		_ = c.Draw(watermarkImg)
+			drawImage(watermarkImg, c)
+
+		} else {
+			if pageNum == 1 {
+				para = creator.NewParagraph(watermark)
+				adjustTextPosition(para, c)
+			}
+
+			drawText(para, c)
+		}
+
 	}
 
 	err = c.WriteToFile(outputPath)
 	return err
+}
+
+func isImageMark(watermark string) bool {
+	_, err := os.Stat(watermark)
+	if err == nil {
+		debugInfo(fmt.Sprintf("Watermark Image: %s", watermark))
+		return true
+	} else if os.IsNotExist(err) {
+		debugInfo(fmt.Sprintf("No file exists at: %s, assuming Text Watermark.", watermark))
+	} else {
+		fmt.Printf("ERROR: File %s stat error: %v", watermark, err)
+		os.Exit(1)
+	}
+
+	return false
 }

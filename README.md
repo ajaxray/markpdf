@@ -58,9 +58,16 @@ markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" --scale-width -
 markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" -wy -10
 ```
 
-### Image watermarking
+### Text watermarking
 
 > Note : Text watermarking is not completed yet.
+
+### Additional notes
+
+- **Specifying Colors**: write them as 6 or 3 digit hexadecilal as used in CSS, without the #
+- Allowed font specifiers
+- Negaive offset will set content positioning from opposite side (right for offsetX and botom from offsetY)
+- Text with opacity is not supported at this moment. Instead, you can create a transperent background PNG image with your text and then use it for watermarking.
 
 ## Roadmap
 

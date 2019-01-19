@@ -30,19 +30,17 @@ func adjustTextPosition(p *creator.Paragraph, c *creator.Creator) {
 	p.SetEnableWrap(false)
 
 	if center {
-		// To set text at middle, widthining the paragraph to page width and setting center allignment
-		// then placing the box at left side of the page
-		p.SetWidth(c.Context().PageWidth)
+		p.SetWidth(p.Width()) // Not working without setting it manually
 		p.SetTextAlignment(creator.TextAlignmentCenter)
-		offsetX = 0
+
+		offsetX = (c.Context().PageWidth / 2) - (p.Width() / 2)
 		offsetY = (c.Context().PageHeight / 2) - (p.Height() / 2)
 	} else {
 		if offsetX < 0 {
-			// To set text from right side, widthining the paragraph to (page width - preferred offset)
-			// then placing the box at left side of the page
-			p.SetWidth(c.Context().PageWidth - math.Abs(offsetX))
+			p.SetWidth(p.Width()) // Not working without setting it manually
 			p.SetTextAlignment(creator.TextAlignmentRight)
-			offsetX = 0
+
+			offsetX = c.Context().PageWidth - (math.Abs(offsetX) + p.Width())
 		}
 		if offsetY < 0 {
 			offsetY = c.Context().PageHeight - (math.Abs(offsetY) + p.Height())

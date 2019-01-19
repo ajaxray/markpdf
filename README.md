@@ -48,9 +48,9 @@ markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" -x -20 -y 20 -o
 markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" --offset-x=100 --offset-y=-100 --angle=45
 markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" -x 100 -y -100 -a 45
 
-# stretch full with of page at page middle
-markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" --scale-width-center
-markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" -W
+# stretch full with of page at page middle, with 30% opacity
+markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" --scale-width-center --opacity=0.3
+markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" -Wo 0.3
 # Note the capital "W" 
 
 # stretch full with of page at page bottom
@@ -60,14 +60,36 @@ markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" -wy -10
 
 ### Text watermarking
 
-> Note : Text watermarking is not completed yet.
+```bash
+# watermark text at right top with 20px offset from edge
+markpdf "path/to/source.pdf" "The Company Name" "path/to/output.pdf" --offset-x=-20 --offset-y=20
+markpdf "path/to/source.pdf" "The Company Name" "path/to/output.pdf" -x -20 -y 20
+
+# Place text at center with bold-italic "Times Roman" font in blue color
+markpdf "path/to/source.pdf" "The Company Name" "path/to/output.pdf" --center --font=times_bold_italic --color=0000FF
+markpdf "path/to/source.pdf" "The Company Name" "path/to/output.pdf" -cf times_bold_italic -l 0000FF
+
+# Place text at center with large bold-italic "Times Roman" font in blue color
+markpdf "path/to/source.pdf" "The Company Name" "path/to/output.pdf" --center --font=times_bold_italic --font-size=24.0 --color=0000FF
+markpdf "path/to/source.pdf" "The Company Name" "path/to/output.pdf" -cf times_bold_italic -s 24.0 -l 0000FF
+```
+
+
+#### Allowed font identifiers 
+
+Currently the following font names are supported:
+- **Courier**:	`courier`, `courier_bold`, `courier_oblique`, `courier_bold_oblique`
+- **Helvetica**:	`helvetica`, `helvetica_bold`, `helvetica_oblique`, `helvetica_bold_oblique`
+- **Times Roman**:	`times`, `times_bold`, `times_italic`, `times_bold_italic`
 
 ### Additional notes
 
 - **Specifying Colors**: write them as 6 or 3 digit hexadecilal as used in CSS, without the #
-- Allowed font specifiers
-- Negaive offset will set content positioning from opposite side (right for offsetX and botom from offsetY)
-- Text with opacity is not supported at this moment. Instead, you can create a transperent background PNG image with your text and then use it for watermarking.
+
+- `--color`, `--font` and `--font-size` flag has no impact for Image watermarking
+- `--scale-*` and `--opacity` flag has no impact for Text watermarking
+- Negative offset will set content positioning from opposite side (right for offsetX and botom from offsetY)
+- Text with opacity is not supported at this moment. Instead, you can [create a transperent background PNG image](http://www.picturetopeople.org/text_generator/others/transparent/transparent-text-generator.html) with your text and then use it for watermarking.
 
 ## Roadmap
 
@@ -75,16 +97,17 @@ markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" -wy -10
 ✅ Configure Opacity option  
 ✅ Configure watermark position by X and Y offset  
 ✅ Allow negative values to for offset to adjust from opposite direction  
-✅️ Easy option for positioning at center  
-✅ Configure rotation angle  
-✅ Options to Stretch watermark to width or height, proportionately  
-✅ Options to Stretch watermark to width or height at the middle of page  
-◻️ Render text on every page  
-◻️ Configure text color, style and font  
+✅️ Easy option for positioning image at center  
+✅ Configure image rotation angle  
+✅ Options to Stretch watermark to page width or height, proportionately  
+✅ Options to Stretch watermark to page width or height at the middle of page  
+◻️ Tile Image all over the page  
+✅ Render text on every page  
+✅ Configure text color, style and font  
 ◻️ Configure text opacity  
-◻️ Configure text rotation angle  
-◻️ Text placement by offset  
-◻️ Put text at page center  
+✅ Configure text rotation angle  
+✅ Text placement by offset  
+✅ Put text at page center  
 
 ### Contribute
 

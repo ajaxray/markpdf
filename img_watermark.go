@@ -11,6 +11,13 @@ func drawImage(watermarkImg *creator.Image, c *creator.Creator) {
 	watermarkImg.SetPos(offsetX, offsetY)
 	watermarkImg.SetOpacity(opacity)
 	watermarkImg.SetAngle(angle)
+	if width > 0 {
+		watermarkImg.ScaleToWidth(width)
+	}
+	if height > 0 {
+		watermarkImg.ScaleToHeight(height)
+	}
+
 	_ = c.Draw(watermarkImg)
 }
 

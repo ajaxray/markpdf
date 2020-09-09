@@ -12,7 +12,7 @@ import (
 
 var offsetX, offsetY, fontSize float64
 var scaleH, scaleW, scaleHCenter, scaleWCenter, center, verbose, version bool
-var opacity, angle float64
+var opacity, angle, width, height float64
 var font, color string
 
 const (
@@ -34,6 +34,9 @@ func init() {
 
 	flag.Float64VarP(&opacity, "opacity", "o", 0.5, "Opacity of watermark. float between 0 to 1.")
 	flag.Float64VarP(&angle, "angle", "a", 0, "Angle of rotation. between 0 to 360, counter clock-wise.")
+
+	flag.Float64VarP(&width, "width", "t", 0, "ScaleToWidth scale Image to a specified width w, maintaining the aspect ratio.")
+	flag.Float64VarP(&height, "height", "g", 0, "ScaleToHeight scale Image to a specified height h, maintaining the aspect ratio.")
 
 	flag.BoolVarP(&verbose, "verbose", "v", false, "Display debug information.")
 	flag.BoolVarP(&version, "version", "V", false, "Display Version information.")

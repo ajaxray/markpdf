@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"os"
+	"path/filepath"
+	"text/template"
 
 	flag "github.com/ogier/pflag"
 	unicommon "github.com/unidoc/unidoc/common"
@@ -41,10 +44,20 @@ func init() {
 	flag.Usage = func() {
 		fmt.Println("markpdf <source> <watermark> <output> [options...]")
 		fmt.Println("<source> and <output> should be path to a PDF file and <watermark> can be a text or path of an image.")
+		fmt.Println("text <watermark> can be used with the following variable:")
+		fmt.Println("{{.Page}} current page number")
+		fmt.Println("{{.Pages}} total page numbers")
+		fmt.Println("{{.Filename}} source file name")
 		fmt.Println("Example: markpdf \"path/to/083.pdf\" \"img/logo.png\" \"path/to/voucher_083.pdf\" --position=10,-10 --opacity=0.4")
+		fmt.Println("Example: markpdf \"path/to/083.pdf\" \"File: {{.Filename}} Page {{.Page}} of {{.Pages}}\" \"path/to/voucher_083.pdf\" --position=10,-10 --opacity=0.4")
 		fmt.Println("Available Options: ")
 		flag.PrintDefaults()
 	}
+}
+
+type Recipient struct {
+	Page, Pages int
+	Filename    string
 }
 
 func main() {
@@ -93,8 +106,18 @@ func markPDF(inputPath string, outputPath string, watermark string) error {
 	numPages, err := pdfReader.GetNumPages()
 	fatalIfError(err, fmt.Sprintf("Failed to get PageCount of the source file. [%s]", err))
 
+	// Prepare data to insert into the template.
+	rec := Recipient{
+		Pages:    numPages,
+		Filename: filepath.Base(inputPath),
+	}
+
+	// Create a new template and parse the watermark into it.
+	t := template.Must(template.New("watermark").Parse(watermark))
+
 	for i := 0; i < numPages; i++ {
 		pageNum := i + 1
+		rec.Page = pageNum
 
 		// Read the page.
 		page, err := pdfReader.GetPage(pageNum)
@@ -119,10 +142,14 @@ func markPDF(inputPath string, outputPath string, watermark string) error {
 			drawImage(watermarkImg, c)
 
 		} else {
-			if pageNum == 1 {
-				para = creator.NewParagraph(watermark)
-				adjustTextPosition(para, c)
-			}
+
+			// Execute the template for each page.
+			buf := new(bytes.Buffer)
+			err := t.Execute(buf, rec)
+			fatalIfError(err, fmt.Sprintf("Failed to execute watermark template: [%s]", err))
+
+			para = creator.NewParagraph(buf.String())
+			adjustTextPosition(para, c)
 
 			drawText(para, c)
 		}

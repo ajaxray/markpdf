@@ -82,7 +82,6 @@ func main() {
 	outputPath := args[2]
 	markPDF(sourcePath, outputPath, watermark)
 
-	fmt.Printf("SUCCESS: Output generated at : %s \n", outputPath)
 	os.Exit(0)
 }
 
@@ -109,11 +108,12 @@ func markPDF(inputPath string, outputPath string, watermark string) error {
 	// Prepare data to insert into the template.
 	rec := Recipient{
 		Pages:    numPages,
-		Filename: filepath.Base(inputPath),
+		Filename: filepath.Base(inputPath[:len(inputPath)-len(filepath.Ext(inputPath))]),
 	}
 
 	// Create a new template and parse the watermark into it.
 	t := template.Must(template.New("watermark").Parse(watermark))
+	buf := new(bytes.Buffer)
 
 	for i := 0; i < numPages; i++ {
 		pageNum := i + 1
@@ -144,7 +144,7 @@ func markPDF(inputPath string, outputPath string, watermark string) error {
 		} else {
 
 			// Execute the template for each page.
-			buf := new(bytes.Buffer)
+			buf.Reset()
 			err := t.Execute(buf, rec)
 			fatalIfError(err, fmt.Sprintf("Failed to execute watermark template: [%s]", err))
 
@@ -156,8 +156,17 @@ func markPDF(inputPath string, outputPath string, watermark string) error {
 
 	}
 
-	err = c.WriteToFile(outputPath)
-	return err
+	// Create a new template and parse the output path into it.
+	oP := template.Must(template.New("outputPath").Parse(outputPath))
+	buf.Reset()
+	err = oP.Execute(buf, rec)
+	fatalIfError(err, fmt.Sprintf("Failed to execute output path template: [%s]", err))
+
+	err = c.WriteToFile(buf.String())
+	fatalIfError(err, fmt.Sprintf("Unable to Write file: [%s]", err))
+
+	fmt.Printf("SUCCESS: Output generated at : %s \n", buf.String())
+	return nil
 }
 
 func isImageMark(watermark string) bool {

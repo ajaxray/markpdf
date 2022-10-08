@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"math"
+	"text/template"
 
 	"github.com/unidoc/unidoc/pdf/creator"
 	"github.com/unidoc/unidoc/pdf/model/fonts"
@@ -49,7 +51,8 @@ func adjustTextPosition(p *creator.Paragraph, c *creator.Creator) {
 	}
 
 	debugInfo(fmt.Sprintf("Paragraph width: %f", p.Width()))
-	debugInfo(fmt.Sprintf("Paragrapg height: %f", p.Height()))
+	debugInfo(fmt.Sprintf("Paragraph height: %f", p.Height()))
+	debugInfo(fmt.Sprintf("Offsets x: %f, y: %f", offsetX, offsetY))
 }
 
 func getFontByName(fontName string) fonts.Font {
@@ -84,4 +87,14 @@ func getFontByName(fontName string) fonts.Font {
 	debugInfo(fmt.Sprintf("Allowed font names: %s", fontList))
 
 	return fonts.NewFontHelveticaBold()
+}
+
+func isWatermarkATemplate(watermark string) (bool, error) {
+	t := template.Must(template.New("watermark").Parse(watermark))
+	buf := new(bytes.Buffer)
+	err := t.Execute(buf, Recipient{0, 0, "out.pdf"})
+	if err != nil {
+		return false, err
+	}
+	return buf.String() != watermark, nil
 }

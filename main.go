@@ -3,14 +3,13 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"os"
-	"path/filepath"
-	"text/template"
-
 	flag "github.com/ogier/pflag"
 	unicommon "github.com/unidoc/unidoc/common"
 	"github.com/unidoc/unidoc/pdf/creator"
 	pdf "github.com/unidoc/unidoc/pdf/model"
+	"os"
+	"path/filepath"
+	"text/template"
 )
 
 var offsetX, offsetY, fontSize float64
@@ -110,10 +109,16 @@ func markPDF(inputPath string, outputPath string, watermark string) error {
 		Pages:    numPages,
 		Filename: filepath.Base(inputPath[:len(inputPath)-len(filepath.Ext(inputPath))]),
 	}
-
-	// Create a new template and parse the watermark into it.
-	t := template.Must(template.New("watermark").Parse(watermark))
+	var t *template.Template
 	buf := new(bytes.Buffer)
+	var watermarksIsATemplate bool
+	if !isImageMark{
+		watermarksIsATemplate, err = isWatermarkATemplate(watermark)
+		fatalIfError(err, fmt.Sprintf("Error parsing the template. [%s]", err))
+		if watermarksIsATemplate {
+			t = template.Must(template.New("watermark").Parse(watermark))
+		}
+	}
 
 	for i := 0; i < numPages; i++ {
 		pageNum := i + 1
@@ -143,30 +148,24 @@ func markPDF(inputPath string, outputPath string, watermark string) error {
 
 		} else {
 
-			// Execute the template for each page.
-			buf.Reset()
-			err := t.Execute(buf, rec)
-			fatalIfError(err, fmt.Sprintf("Failed to execute watermark template: [%s]", err))
+			if pageNum == 1 {
+				para = creator.NewParagraph(watermark)
+				adjustTextPosition(para, c)
+			}
 
-			para = creator.NewParagraph(buf.String())
-			adjustTextPosition(para, c)
+			if watermarksIsATemplate {
+				buf.Reset()
+				err := t.Execute(buf, rec)
+				fatalIfError(err, fmt.Sprintf("Failed to execute watermark template: [%s]", err))
+				para.SetText(buf.String())
+			}
 
 			drawText(para, c)
 		}
-
 	}
 
-	// Create a new template and parse the output path into it.
-	oP := template.Must(template.New("outputPath").Parse(outputPath))
-	buf.Reset()
-	err = oP.Execute(buf, rec)
-	fatalIfError(err, fmt.Sprintf("Failed to execute output path template: [%s]", err))
-
-	err = c.WriteToFile(buf.String())
-	fatalIfError(err, fmt.Sprintf("Unable to Write file: [%s]", err))
-
-	fmt.Printf("SUCCESS: Output generated at : %s \n", buf.String())
-	return nil
+	err = c.WriteToFile(outputPath)
+	return err
 }
 
 func isImageMark(watermark string) bool {

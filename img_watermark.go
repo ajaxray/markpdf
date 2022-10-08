@@ -18,6 +18,11 @@ func adjustImagePosition(watermarkImg *creator.Image, c *creator.Creator) {
 	debugInfo(fmt.Sprintf("Watermark Width  : %v", watermarkImg.Width()))
 	debugInfo(fmt.Sprintf("Watermark Height : %v", watermarkImg.Height()))
 
+
+	if scaleImage != 100 {
+		debugInfo(fmt.Sprintf("Scaling to %v", scaleImage))
+		watermarkImg.ScaleToHeight(scaleImage * watermarkImg.Width() / 100)
+	}
 	if scaleWCenter {
 		watermarkImg.ScaleToWidth(c.Context().PageWidth)
 		offsetX = 0

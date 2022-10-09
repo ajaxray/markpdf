@@ -8,10 +8,34 @@ import (
 )
 
 func drawImage(watermarkImg *creator.Image, c *creator.Creator) {
-	watermarkImg.SetPos(offsetX, offsetY)
 	watermarkImg.SetOpacity(opacity)
 	watermarkImg.SetAngle(angle)
+	if tiles {
+		repeatTiles(watermarkImg, c)
+		return
+	}
+	watermarkImg.SetPos(offsetX, offsetY)
 	_ = c.Draw(watermarkImg)
+}
+
+func repeatTiles(watermarkImg *creator.Image, c *creator.Creator) {
+	w := watermarkImg.Width()
+	h := watermarkImg.Height()
+	pw := c.Context().PageWidth
+	ph := c.Context().PageHeight
+
+	nw := math.Ceil(pw / w)
+	nh := math.Ceil(ph / h)
+
+	debugInfo(fmt.Sprintf("Settings tiles of %v x %v", nw, nh))
+	for i := 0; i < int(nw); i++ {
+		x := w * float64(i)
+		for j := 0; j < int(nh); j++ {
+			y := h * float64(j)
+			watermarkImg.SetPos(x, y)
+			_ = c.Draw(watermarkImg)
+		}
+	}
 }
 
 func adjustImagePosition(watermarkImg *creator.Image, c *creator.Creator) {
@@ -22,6 +46,10 @@ func adjustImagePosition(watermarkImg *creator.Image, c *creator.Creator) {
 	if scaleImage != 100 {
 		debugInfo(fmt.Sprintf("Scaling to %v", scaleImage))
 		watermarkImg.ScaleToHeight(scaleImage * watermarkImg.Width() / 100)
+	}
+	if tiles {
+		offsetX, offsetY = 0, 0
+		return
 	}
 	if scaleWCenter {
 		watermarkImg.ScaleToWidth(c.Context().PageWidth)

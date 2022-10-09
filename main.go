@@ -11,7 +11,7 @@ import (
 )
 
 var offsetX, offsetY, scaleImage, fontSize float64
-var scaleH, scaleW, scaleHCenter, scaleWCenter, center, verbose, version bool
+var scaleH, scaleW, scaleHCenter, scaleWCenter, center, tiles, verbose, version bool
 var opacity, angle float64
 var font, color string
 
@@ -35,6 +35,7 @@ func init() {
 
 	flag.Float64VarP(&opacity, "opacity", "o", 0.5, "Opacity of watermark. float between 0 to 1.")
 	flag.Float64VarP(&angle, "angle", "a", 0, "Angle of rotation. between 0 to 360, counter clock-wise.")
+	flag.BoolVarP(&tiles, "tiles", "t", false, "Repeat watermark as tiles on page. All offsets will be ignored.")
 
 	flag.BoolVarP(&verbose, "verbose", "v", false, "Display debug information.")
 	flag.BoolVarP(&version, "version", "V", false, "Display Version information.")

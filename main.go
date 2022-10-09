@@ -10,7 +10,7 @@ import (
 	pdf "github.com/unidoc/unidoc/pdf/model"
 )
 
-var offsetX, offsetY, fontSize float64
+var offsetX, offsetY, scaleImage, fontSize float64
 var scaleH, scaleW, scaleHCenter, scaleWCenter, center, verbose, version bool
 var opacity, angle float64
 var font, color string
@@ -22,6 +22,7 @@ const (
 func init() {
 	flag.Float64VarP(&offsetX, "offset-x", "x", 0, "Offset from left (or right for negative number).")
 	flag.Float64VarP(&offsetY, "offset-y", "y", 0, "Offset from top (or bottom for negative number).")
+	flag.Float64VarP(&scaleImage, "scale", "p", 100, "Scale Image to desired percentage.")
 	flag.BoolVarP(&center, "center", "c", false, "Set position at page center. Offset X and Y will be ignored.")
 	flag.BoolVarP(&scaleW, "scale-width", "w", false, "Scale Image to page width. If set, offset X will be ignored.")
 	flag.BoolVarP(&scaleH, "scale-height", "h", false, "Scale Image to page height. If set, top offset Y will be ignored.")

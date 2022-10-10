@@ -89,12 +89,19 @@ func getFontByName(fontName string) fonts.Font {
 	return fonts.NewFontHelveticaBold()
 }
 
-func isWatermarkATemplate(watermark string) (bool, error) {
+func isWatermarkATemplate(watermark string) bool {
 	t := template.Must(template.New("watermark").Parse(watermark))
 	buf := new(bytes.Buffer)
 	err := t.Execute(buf, Recipient{0, 0, "out.pdf"})
 	if err != nil {
-		return false, err
+		fatalIfError(err, fmt.Sprintf("Error parsing the template. [%s]", err))
 	}
-	return buf.String() != watermark, nil
+	return buf.String() != watermark
+}
+
+func applyTemplate(t *template.Template, rec *Recipient, para *creator.Paragraph) {
+	buf := new(bytes.Buffer)
+	err := t.Execute(buf, rec)
+	fatalIfError(err, fmt.Sprintf("Failed to execute watermark template: [%s]", err))
+	para.SetText(buf.String())
 }

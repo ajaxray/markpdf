@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	flag "github.com/ogier/pflag"
 	unicommon "github.com/unidoc/unidoc/common"
@@ -92,6 +91,7 @@ func markPDF(inputPath string, outputPath string, watermark string) error {
 	var para *creator.Paragraph
 
 	isImageMark := isImageMark(watermark)
+	watermarkIsATemplate := isWatermarkATemplate(watermark)
 
 	// Read the input pdf file.
 	f, err := os.Open(inputPath)
@@ -110,14 +110,8 @@ func markPDF(inputPath string, outputPath string, watermark string) error {
 		Filename: filepath.Base(inputPath[:len(inputPath)-len(filepath.Ext(inputPath))]),
 	}
 	var t *template.Template
-	buf := new(bytes.Buffer)
-	var watermarksIsATemplate bool
-	if !isImageMark{
-		watermarksIsATemplate, err = isWatermarkATemplate(watermark)
-		fatalIfError(err, fmt.Sprintf("Error parsing the template. [%s]", err))
-		if watermarksIsATemplate {
-			t = template.Must(template.New("watermark").Parse(watermark))
-		}
+	if !isImageMark && watermarkIsATemplate {
+		t = template.Must(template.New("watermark").Parse(watermark))
 	}
 
 	for i := 0; i < numPages; i++ {
@@ -153,11 +147,8 @@ func markPDF(inputPath string, outputPath string, watermark string) error {
 				adjustTextPosition(para, c)
 			}
 
-			if watermarksIsATemplate {
-				buf.Reset()
-				err := t.Execute(buf, rec)
-				fatalIfError(err, fmt.Sprintf("Failed to execute watermark template: [%s]", err))
-				para.SetText(buf.String())
+			if watermarkIsATemplate {
+				applyTemplate(t, &rec, para)
 			}
 
 			drawText(para, c)

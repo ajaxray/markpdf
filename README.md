@@ -87,7 +87,7 @@ Currently the following font names are supported:
 - **Specifying Colors**: write them as 6 or 3 digit hexadecilal as used in CSS, without the #
 
 - `--color`, `--font` and `--font-size` flag has no impact for Image watermarking
-- `--scale-*` and `--opacity` flag has no impact for Text watermarking
+- `--scale-*`, `--tiles` and `--opacity` flag has no impact for Text watermarking
 - Negative offset will set content positioning from opposite side (right for offsetX and botom from offsetY)
 - Text with opacity is not supported at this moment. Instead, you can [create a transperent background PNG image](http://www.picturetopeople.org/text_generator/others/transparent/transparent-text-generator.html) with your text and then use it for watermarking.
 
@@ -101,7 +101,7 @@ Currently the following font names are supported:
 ✅ Configure image rotation angle  
 ✅ Options to Stretch watermark to page width or height, proportionately  
 ✅ Options to Stretch watermark to page width or height at the middle of page  
-◻️ Tile Image all over the page  
+✅ Tile Image all over the page  
 ✅ Render text on every page  
 ✅ Configure text color, style and font  
 ◻️ Configure text opacity  

@@ -22,6 +22,12 @@ func drawText(p *creator.Paragraph, c *creator.Creator) {
 	p.SetColor(creator.ColorRGBFromHex("#" + color))
 	p.SetAngle(angle)
 
+	// Encountering problem with tiles and text watermark. Contributions welcome.
+	//if tiles {
+	//	repeatTiles(p, c)
+	//	return
+	//}
+
 	_ = c.Draw(p)
 }
 
@@ -29,7 +35,11 @@ func adjustTextPosition(p *creator.Paragraph, c *creator.Creator) {
 	p.SetTextAlignment(creator.TextAlignmentLeft)
 	p.SetEnableWrap(false)
 
-	if center {
+	if tiles {
+		p.SetWidth(p.Width()) // Not working without setting it manually
+		p.SetTextAlignment(creator.TextAlignmentCenter)
+		offsetX, offsetY = 0, 0
+	} else if center {
 		p.SetWidth(p.Width()) // Not working without setting it manually
 		p.SetTextAlignment(creator.TextAlignmentCenter)
 

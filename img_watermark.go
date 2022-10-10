@@ -18,33 +18,13 @@ func drawImage(watermarkImg *creator.Image, c *creator.Creator) {
 	_ = c.Draw(watermarkImg)
 }
 
-func repeatTiles(watermarkImg *creator.Image, c *creator.Creator) {
-	w := watermarkImg.Width()
-	h := watermarkImg.Height()
-	pw := c.Context().PageWidth
-	ph := c.Context().PageHeight
-
-	nw := math.Ceil(pw / w)
-	nh := math.Ceil(ph / h)
-
-	debugInfo(fmt.Sprintf("Settings tiles of %v x %v", nw, nh))
-	for i := 0; i < int(nw); i++ {
-		x := w * float64(i)
-		for j := 0; j < int(nh); j++ {
-			y := h * float64(j)
-			watermarkImg.SetPos(x, y)
-			_ = c.Draw(watermarkImg)
-		}
-	}
-}
-
 func adjustImagePosition(watermarkImg *creator.Image, c *creator.Creator) {
 	debugInfo(fmt.Sprintf("Watermark Width  : %v", watermarkImg.Width()))
 	debugInfo(fmt.Sprintf("Watermark Height : %v", watermarkImg.Height()))
 
 
 	if scaleImage != 100 {
-		debugInfo(fmt.Sprintf("Scaling to %v", scaleImage))
+		debugInfo(fmt.Sprintf("Scaling to %v%%", scaleImage))
 		watermarkImg.ScaleToHeight(scaleImage * watermarkImg.Width() / 100)
 	}
 	if tiles {

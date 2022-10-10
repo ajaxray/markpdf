@@ -56,7 +56,17 @@ markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" -Wo 0.3
 # stretch full with of page at page bottom
 markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" --scale-width --offset-y=-10
 markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" -wy -10
-```
+
+# Scale the image to desired percentage
+markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" --scale=30
+
+# Add image as tiles all over the page
+markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" --tiles
+
+# Add image as tiles with interleaved spacing
+markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" --tiles --spacing=20
+``
+
 
 ### Text watermarking
 

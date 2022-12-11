@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"os"
-
 	flag "github.com/ogier/pflag"
 	unicommon "github.com/unidoc/unidoc/common"
 	"github.com/unidoc/unidoc/pdf/creator"
 	pdf "github.com/unidoc/unidoc/pdf/model"
+	"os"
+	"path/filepath"
+	"text/template"
 )
 
 var offsetX, offsetY, scaleImage, fontSize float64
@@ -42,10 +43,20 @@ func init() {
 	flag.Usage = func() {
 		fmt.Println("markpdf <source> <watermark> <output> [options...]")
 		fmt.Println("<source> and <output> should be path to a PDF file and <watermark> can be a text or path of an image.")
+		fmt.Println("text <watermark> can be used with the following variable:")
+		fmt.Println("{{.Page}} current page number")
+		fmt.Println("{{.Pages}} total page numbers")
+		fmt.Println("{{.Filename}} source file name")
 		fmt.Println("Example: markpdf \"path/to/083.pdf\" \"img/logo.png\" \"path/to/voucher_083.pdf\" --position=10,-10 --opacity=0.4")
+		fmt.Println("Example: markpdf \"path/to/083.pdf\" \"File: {{.Filename}} Page {{.Page}} of {{.Pages}}\" \"path/to/voucher_083.pdf\" --position=10,-10 --opacity=0.4")
 		fmt.Println("Available Options: ")
 		flag.PrintDefaults()
 	}
+}
+
+type Recipient struct {
+	Page, Pages int
+	Filename    string
 }
 
 func main() {
@@ -70,7 +81,6 @@ func main() {
 	outputPath := args[2]
 	markPDF(sourcePath, outputPath, watermark)
 
-	fmt.Printf("SUCCESS: Output generated at : %s \n", outputPath)
 	os.Exit(0)
 }
 
@@ -82,6 +92,7 @@ func markPDF(inputPath string, outputPath string, watermark string) error {
 	var para *creator.Paragraph
 
 	isImageMark := isImageMark(watermark)
+	watermarkIsATemplate := isWatermarkATemplate(watermark)
 
 	// Read the input pdf file.
 	f, err := os.Open(inputPath)
@@ -94,8 +105,19 @@ func markPDF(inputPath string, outputPath string, watermark string) error {
 	numPages, err := pdfReader.GetNumPages()
 	fatalIfError(err, fmt.Sprintf("Failed to get PageCount of the source file. [%s]", err))
 
+	// Prepare data to insert into the template.
+	rec := Recipient{
+		Pages:    numPages,
+		Filename: filepath.Base(inputPath[:len(inputPath)-len(filepath.Ext(inputPath))]),
+	}
+	var t *template.Template
+	if !isImageMark && watermarkIsATemplate {
+		t = template.Must(template.New("watermark").Parse(watermark))
+	}
+
 	for i := 0; i < numPages; i++ {
 		pageNum := i + 1
+		rec.Page = pageNum
 
 		// Read the page.
 		page, err := pdfReader.GetPage(pageNum)
@@ -120,14 +142,18 @@ func markPDF(inputPath string, outputPath string, watermark string) error {
 			drawImage(watermarkImg, c)
 
 		} else {
+
 			if pageNum == 1 {
 				para = creator.NewParagraph(watermark)
 				adjustTextPosition(para, c)
 			}
 
+			if watermarkIsATemplate {
+				applyTemplate(t, &rec, para)
+			}
+
 			drawText(para, c)
 		}
-
 	}
 
 	err = c.WriteToFile(outputPath)

@@ -74,6 +74,19 @@ markpdf "path/to/source.pdf" "The Company Name" "path/to/output.pdf" --center --
 markpdf "path/to/source.pdf" "The Company Name" "path/to/output.pdf" -cf times_bold_italic -s 24.0 -l 0000FF
 ```
 
+#### Using placeholders with text watermark
+
+The following placeholder can be used in text watermark:
+- `{{.Page}}` prints the current page number
+- `{{.Pages}}` prints the total page numbers
+- `{{.Filename}}` prints name of the source file
+
+```bash
+# Using placeholders in text watermark
+markpdf "path/to/083.pdf" "File: {{.Filename}} Page {{.Page}} of {{.Pages}}" "path/to/voucher_083.pdf" --position=10,-10
+```
+
+_Note: This (placeholder) feature will be available in upcoming release. If you want to use it right now, please build from the `master` branch._
 
 #### Allowed font identifiers 
 

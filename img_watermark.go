@@ -8,9 +8,13 @@ import (
 )
 
 func drawImage(watermarkImg *creator.Image, c *creator.Creator) {
-	watermarkImg.SetPos(offsetX, offsetY)
 	watermarkImg.SetOpacity(opacity)
 	watermarkImg.SetAngle(angle)
+	if tiles {
+		repeatTiles(watermarkImg, c)
+		return
+	}
+	watermarkImg.SetPos(offsetX, offsetY)
 	_ = c.Draw(watermarkImg)
 }
 
@@ -20,8 +24,12 @@ func adjustImagePosition(watermarkImg *creator.Image, c *creator.Creator) {
 
 
 	if scaleImage != 100 {
-		debugInfo(fmt.Sprintf("Scaling to %v", scaleImage))
+		debugInfo(fmt.Sprintf("Scaling to %v%%", scaleImage))
 		watermarkImg.ScaleToHeight(scaleImage * watermarkImg.Width() / 100)
+	}
+	if tiles {
+		offsetX, offsetY = 0, 0
+		return
 	}
 	if scaleWCenter {
 		watermarkImg.ScaleToWidth(c.Context().PageWidth)

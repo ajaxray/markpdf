@@ -56,7 +56,17 @@ markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" -Wo 0.3
 # stretch full with of page at page bottom
 markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" --scale-width --offset-y=-10
 markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" -wy -10
-```
+
+# Scale the image to desired percentage
+markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" --scale=30
+
+# Add image as tiles all over the page
+markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" --tiles
+
+# Add image as tiles with interleaved spacing
+markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" --tiles --spacing=20
+``
+
 
 ### Text watermarking
 
@@ -100,7 +110,7 @@ Currently the following font names are supported:
 - **Specifying Colors**: write them as 6 or 3 digit hexadecilal as used in CSS, without the #
 
 - `--color`, `--font` and `--font-size` flag has no impact for Image watermarking
-- `--scale-*` and `--opacity` flag has no impact for Text watermarking
+- `--scale-*`, `--tiles` and `--opacity` flag has no impact for Text watermarking
 - Negative offset will set content positioning from opposite side (right for offsetX and botom from offsetY)
 - Text with opacity is not supported at this moment. Instead, you can [create a transperent background PNG image](http://www.picturetopeople.org/text_generator/others/transparent/transparent-text-generator.html) with your text and then use it for watermarking.
 
@@ -114,7 +124,7 @@ Currently the following font names are supported:
 ✅ Configure image rotation angle  
 ✅ Options to Stretch watermark to page width or height, proportionately  
 ✅ Options to Stretch watermark to page width or height at the middle of page  
-◻️ Tile Image all over the page  
+✅ Tile Image all over the page  
 ✅ Render text on every page  
 ✅ Configure text color, style and font  
 ◻️ Configure text opacity  

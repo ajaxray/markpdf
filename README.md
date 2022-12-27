@@ -9,6 +9,8 @@ Highlights -
 - Extreamly fast!
 - Stretching watermark image to height or weight proportionately 
 - Options to adjust position, opacity, rotation of image
+- Placeholder for text watermark
+- Tile image watermark all over the page
 - Free and open source
 
 ## Install
@@ -56,7 +58,17 @@ markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" -Wo 0.3
 # stretch full with of page at page bottom
 markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" --scale-width --offset-y=-10
 markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" -wy -10
-```
+
+# Scale the image to desired percentage
+markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" --scale=30
+
+# Add image as tiles all over the page
+markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" --tiles
+
+# Add image as tiles with interleaved spacing
+markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" --tiles --spacing=20
+``
+
 
 ### Text watermarking
 
@@ -83,10 +95,8 @@ The following placeholder can be used in text watermark:
 
 ```bash
 # Using placeholders in text watermark
-markpdf "path/to/083.pdf" "File: {{.Filename}} Page {{.Page}} of {{.Pages}}" "path/to/voucher_083.pdf" --position=10,-10
+markpdf "path/to/083.pdf" "File: {{.Filename}} Page {{.Page}} of {{.Pages}}" "path/to/voucher_083.pdf" -x -20 -y 30
 ```
-
-_Note: This (placeholder) feature will be available in upcoming release. If you want to use it right now, please build from the `master` branch._
 
 #### Allowed font identifiers 
 
@@ -100,7 +110,7 @@ Currently the following font names are supported:
 - **Specifying Colors**: write them as 6 or 3 digit hexadecilal as used in CSS, without the #
 
 - `--color`, `--font` and `--font-size` flag has no impact for Image watermarking
-- `--scale-*` and `--opacity` flag has no impact for Text watermarking
+- `--scale-*`, `--tiles` and `--opacity` flag has no impact for Text watermarking
 - Negative offset will set content positioning from opposite side (right for offsetX and botom from offsetY)
 - Text with opacity is not supported at this moment. Instead, you can [create a transperent background PNG image](http://www.picturetopeople.org/text_generator/others/transparent/transparent-text-generator.html) with your text and then use it for watermarking.
 
@@ -114,10 +124,10 @@ Currently the following font names are supported:
 ✅ Configure image rotation angle  
 ✅ Options to Stretch watermark to page width or height, proportionately  
 ✅ Options to Stretch watermark to page width or height at the middle of page  
-◻️ Tile Image all over the page  
+✅ Tile Image all over the page  
 ✅ Render text on every page  
 ✅ Configure text color, style and font  
-◻️ Configure text opacity  
+⏺ Configure text opacity  
 ✅ Configure text rotation angle  
 ✅ Text placement by offset  
 ✅ Put text at page center  

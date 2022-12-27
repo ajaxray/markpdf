@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+	"text/template"
+
 	flag "github.com/ogier/pflag"
 	unicommon "github.com/unidoc/unidoc/common"
 	"github.com/unidoc/unidoc/pdf/creator"
 	pdf "github.com/unidoc/unidoc/pdf/model"
-	"os"
-	"path/filepath"
-	"text/template"
 )
 
 var offsetX, offsetY, scaleImage, fontSize, spacing float64
@@ -44,14 +45,14 @@ func init() {
 	flag.BoolVarP(&version, "version", "V", false, "Display Version information.")
 
 	flag.Usage = func() {
-		fmt.Println("markpdf <source> <watermark> <output> [options...]")
+		fmt.Println("Usages: markpdf <source> <watermark> <output> [options...]")
 		fmt.Println("<source> and <output> should be path to a PDF file and <watermark> can be a text or path of an image.")
-		fmt.Println("text <watermark> can be used with the following variable:")
-		fmt.Println("{{.Page}} current page number")
-		fmt.Println("{{.Pages}} total page numbers")
-		fmt.Println("{{.Filename}} source file name")
-		fmt.Println("Example: markpdf \"path/to/083.pdf\" \"img/logo.png\" \"path/to/voucher_083.pdf\" --position=10,-10 --opacity=0.4")
+		fmt.Println("")
+		fmt.Println("Example: markpdf \"path/to/083.pdf\" \"img/logo.png\" \"path/to/voucher_083.pdf\" -x 10 -y -30 --opacity=0.5")
+		fmt.Println("Example: markpdf \"path/to/083.pdf\" \"img/logo.png\" \"path/to/tmp_voucher_083.pdf\" --tiles --spacing=50 --opacity=0.2")
+		fmt.Println("Example: markpdf \"path/to/083.pdf\" \"GreatCompanyName\" \"path/to/voucher_083.pdf\" -cf times_bold_italic")
 		fmt.Println("Example: markpdf \"path/to/083.pdf\" \"File: {{.Filename}} Page {{.Page}} of {{.Pages}}\" \"path/to/voucher_083.pdf\" --position=10,-10 --opacity=0.4")
+		fmt.Println("")
 		fmt.Println("Available Options: ")
 		flag.PrintDefaults()
 	}

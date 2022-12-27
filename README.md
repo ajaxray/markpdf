@@ -9,6 +9,8 @@ Highlights -
 - Extreamly fast!
 - Stretching watermark image to height or weight proportionately 
 - Options to adjust position, opacity, rotation of image
+- Placeholder for text watermark
+- Tile image watermark all over the page
 - Free and open source
 
 ## Install
@@ -93,10 +95,8 @@ The following placeholder can be used in text watermark:
 
 ```bash
 # Using placeholders in text watermark
-markpdf "path/to/083.pdf" "File: {{.Filename}} Page {{.Page}} of {{.Pages}}" "path/to/voucher_083.pdf" --position=10,-10
+markpdf "path/to/083.pdf" "File: {{.Filename}} Page {{.Page}} of {{.Pages}}" "path/to/voucher_083.pdf" -x -20 -y 30
 ```
-
-_Note: This (placeholder) feature will be available in upcoming release. If you want to use it right now, please build from the `master` branch._
 
 #### Allowed font identifiers 
 
@@ -127,7 +127,7 @@ Currently the following font names are supported:
 ✅ Tile Image all over the page  
 ✅ Render text on every page  
 ✅ Configure text color, style and font  
-◻️ Configure text opacity  
+⏺ Configure text opacity  
 ✅ Configure text rotation angle  
 ✅ Text placement by offset  
 ✅ Put text at page center  

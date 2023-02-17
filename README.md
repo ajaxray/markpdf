@@ -67,7 +67,7 @@ markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" --tiles
 
 # Add image as tiles with interleaved spacing
 markpdf "path/to/source.pdf" "img/logo.png" "path/to/output.pdf" --tiles --spacing=20
-``
+```
 
 
 ### Text watermarking

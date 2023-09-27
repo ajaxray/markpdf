@@ -13,7 +13,7 @@ import (
 )
 
 var offsetX, offsetY, scaleImage, fontSize, spacing float64
-var scaleH, scaleW, scaleHCenter, scaleWCenter, center, tiles, verbose, version bool
+var scaleH, scaleW, scaleHCenter, scaleWCenter, center, horizontalCenter, tiles, verbose, version bool
 var opacity, angle float64
 var font, color string
 
@@ -26,6 +26,7 @@ func init() {
 	flag.Float64VarP(&offsetY, "offset-y", "y", 0, "Offset from top (or bottom for negative number).")
 	flag.Float64VarP(&scaleImage, "scale", "p", 100, "Scale Image to desired percentage.")
 	flag.BoolVarP(&center, "center", "c", false, "Set position at page center. Offset X and Y will be ignored.")
+	flag.BoolVarP(&horizontalCenter, "horizontal-b-center", "b", false, "Set horizontal position at page center. Offset X will be ignored.")
 	flag.BoolVarP(&scaleW, "scale-width", "w", false, "Scale Image to page width. If set, offset X will be ignored.")
 	flag.BoolVarP(&scaleH, "scale-height", "h", false, "Scale Image to page height. If set, top offset Y will be ignored.")
 	flag.BoolVarP(&scaleWCenter, "scale-width-center", "W", false, "Scale Image to page width and Y will be set at middle.")

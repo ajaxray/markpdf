@@ -47,6 +47,14 @@ func adjustTextPosition(p *creator.Paragraph, c *creator.Creator) {
 
 		offsetX = (c.Context().PageWidth / 2) - (p.Width() / 2)
 		offsetY = (c.Context().PageHeight / 2) - (p.Height() / 2)
+	} else if horizontalCenter {
+		p.SetWidth(p.Width()) // Not working without setting it manually
+		p.SetTextAlignment(creator.TextAlignmentCenter)
+		offsetX = (c.Context().PageWidth / 2) - (p.Width() / 2)
+		if offsetY < 0 {
+			offsetY = c.Context().PageHeight - (math.Abs(offsetY) + p.Height())
+		}
+
 	} else {
 		if offsetX < 0 {
 			p.SetWidth(p.Width()) // Not working without setting it manually

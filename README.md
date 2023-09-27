@@ -81,6 +81,13 @@ markpdf "path/to/source.pdf" "The Company Name" "path/to/output.pdf" -x -20 -y 2
 markpdf "path/to/source.pdf" "The Company Name" "path/to/output.pdf" --center --font=times_bold_italic --color=0000FF
 markpdf "path/to/source.pdf" "The Company Name" "path/to/output.pdf" -cf times_bold_italic -l 0000FF
 
+# Place text horizontally center with 50px offset vertically from edge
+markpdf "path/to/source.pdf" "The Company Name" "path/to/output.pdf" --horizontal-b-center -y 50
+
+# Place text horizontally center with 50px offset vertically
+# with bold-italic "Times Roman" font
+markpdf "path/to/source.pdf" "The Company Name" "path/to/output.pdf" -by 50
+
 # Place text at center with large bold-italic "Times Roman" font in blue color
 markpdf "path/to/source.pdf" "The Company Name" "path/to/output.pdf" --center --font=times_bold_italic --font-size=24.0 --color=0000FF
 markpdf "path/to/source.pdf" "The Company Name" "path/to/output.pdf" -cf times_bold_italic -s 24.0 -l 0000FF
